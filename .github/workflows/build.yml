@@ -1,0 +1,84 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Build executable
+      run: |
+        pyinstaller app.spec
+    
+    - name: Get version from tag
+      id: get_version
+      run: |
+        if ($env:GITHUB_REF -match 'refs/tags/v(.*)') {
+          $version = $matches[1]
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+        } else {
+          echo "version=dev" >> $env:GITHUB_OUTPUT
+        }
+      shell: pwsh
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          dist/智能会务机票助手.exe
+        name: 智能会务机票助手 v${{ steps.get_version.outputs.version }}
+        body: |
+          ## 🎉 新版本发布
+          
+          ### 📦 下载
+          - [智能会务机票助手.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/智能会务机票助手.exe)
+          
+          ### 🔧 安装说明
+          1. 下载上述exe文件
+          2. 双击运行即可使用
+          3. 首次运行可能需要几秒钟启动时间
+          
+          ### ✨ 主要功能
+          - Excel文件上传与解析
+          - 询价信息自动生成
+          - 票务回复智能处理
+          - 价格信息自动清洗
+          - 手机号码格式验证
+          - 自动更新功能
+          
+          ### 🛠️ 系统要求
+          - Windows 10/11
+          - 无需安装Python环境
+          
+          如有问题请提交Issue反馈。
+        generate_release_notes: false
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: mice-ticketing-exe
+        path: dist/智能会务机票助手.exe
+        retention-days: 30
