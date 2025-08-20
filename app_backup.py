@@ -1,4 +1,4 @@
-﻿import streamlit as st
+import streamlit as st
 import pandas as pd
 import re
 import json
@@ -96,7 +96,7 @@ h2 {
 
 /* h4标题样式优化 */
 h3 {
-            font-size: 1.4rem !important;
+            font-size: 1.2rem !important;
             font-weight: 550 !important;
             margin-top: 1.2rem !important;
             margin-bottom: 0.9rem !important;
@@ -156,24 +156,11 @@ h3 {
     box-shadow: none !important;
     text-align: left !important;
     line-height: 1.4 !important;
-    outline: none !important;
 }
 
 .stSidebar .stButton > button:hover {
     background: rgba(255, 255, 255, 0.1) !important;
     border: none !important;
-    outline: none !important;
-}
-
-.stSidebar .stButton > button:focus {
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-.stSidebar .stButton > button:active {
-    border: none !important;
-    outline: none !important;
 }
 
 .stSidebar .stButton > button .stMarkdown p {
@@ -183,67 +170,13 @@ h3 {
     text-align: left !important;
 }
 
-/* 侧边栏展开器标题 - 图标移到右侧，强制去除所有边框 */
+/* 侧边栏展开器标题 - 图标移到右侧 */
 .stSidebar .stExpander > details > summary {
     font-size: 0.9rem !important;
     line-height: 1.4 !important;
     border: none !important;
-    border-width: 0 !important;
-    border-style: none !important;
-    border-color: transparent !important;
-    border-radius: 0 !important;
     background: transparent !important;
     padding: 0.2rem 0 !important;
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-.stSidebar .stExpander > details > summary:hover {
-    border: none !important;
-    border-width: 0 !important;
-    border-style: none !important;
-    border-color: transparent !important;
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-.stSidebar .stExpander > details > summary:focus {
-    border: none !important;
-    border-width: 0 !important;
-    border-style: none !important;
-    border-color: transparent !important;
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-.stSidebar .stExpander > details > summary:active {
-    border: none !important;
-    border-width: 0 !important;
-    border-style: none !important;
-    border-color: transparent !important;
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-/* 强制覆盖展开器的所有可能边框样式 */
-.stSidebar .streamlit-expanderHeader {
-    border: none !important;
-    border-width: 0 !important;
-    border-style: none !important;
-    border-color: transparent !important;
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-.stSidebar .streamlit-expanderHeader:hover,
-.stSidebar .streamlit-expanderHeader:focus,
-.stSidebar .streamlit-expanderHeader:active {
-    border: none !important;
-    border-width: 0 !important;
-    border-style: none !important;
-    border-color: transparent !important;
-    outline: none !important;
-    box-shadow: none !important;
 }
 
 .stSidebar .stExpander > details > summary .stMarkdown p {
@@ -306,39 +239,6 @@ h3 {
     margin: 0 !important;
     line-height: 1.4 !important;
 }
-
-/* 修复检查更新反馈信息框文字垂直对齐问题 */
-.stSidebar [data-testid="stAlertContainer"] {
-    display: flex !important;
-    align-items: center !important;
-    min-height: 2.5rem !important;
-    padding: 0.5rem !important;
-}
-
-.stSidebar [data-testid="stAlertContentSuccess"] {
-    display: flex !important;
-    align-items: center !important;
-    width: 100% !important;
-    min-height: inherit !important;
-}
-
-.stSidebar [data-testid="stAlertContainer"] [data-testid="stMarkdownContainer"] {
-    display: flex !important;
-    align-items: center !important;
-    width: 100% !important;
-    min-height: inherit !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-.stSidebar [data-testid="stAlertContainer"] [data-testid="stMarkdownContainer"] p {
-    font-size: 0.9rem !important;
-    margin: 0 !important;
-    line-height: 1.4 !important;
-    vertical-align: middle !important;
-    display: flex !important;
-    align-items: center !important;
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -367,266 +267,52 @@ with st.sidebar:
     except:
         st.markdown("<div style='text-align: center; font-size: 2rem; margin-bottom: 1.5rem;'>✈️</div>", unsafe_allow_html=True)
     
-    st.markdown("### APP INFO📱")
+    st.markdown("### 📱 应用信息")
+    st.markdown(f"当前版本：Ver{current_version}")
     
-    # 添加版本信息，增加下边距
-    st.markdown(f"<div style='margin-bottom: 1.2rem;'>Current Verion: {current_version}</div>", unsafe_allow_html=True)
-    
-    # 检查更新功能（已改为原生按钮实现）
-    # 使用原生按钮实现检查更新功能
-    update_clicked = st.button("Check for Updates 🔄", key="update_btn",
-                              help="检查是否有新版本可用")
-    
-    # 自定义按钮样式，使其看起来像文本，并添加间距优化
+    # 检查更新文本（可点击）
+    # 创建可点击的文本样式
     st.markdown(
         """
         <style>
-        /* 自定义检查更新按钮样式 - 强制去除所有边框 */
-        div[data-testid="stSidebar"] .stButton > button {
-            background: transparent !important;
-            border: none !important;
-            border-width: 0 !important;
-            border-style: none !important;
-            border-color: transparent !important;
-            border-radius: 0 !important;
-            padding: 0.2rem 0 !important;
-            font-size: 0.9rem !important;
-            line-height: 1.4 !important;
-            color: #ffffff !important;
-            text-align: left !important;
-            box-shadow: none !important;
-            width: 100% !important;
-            justify-content: flex-start !important;
-            margin-bottom: 1.2rem !important;
-            outline: none !important;
+        .clickable-update-text {
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0.2rem 0;
+            transition: opacity 0.3s ease;
+            user-select: none;
         }
-        div[data-testid="stSidebar"] .stButton > button:hover {
-            background: transparent !important;
-            opacity: 0.7 !important;
-            text-decoration: underline !important;
-            border: none !important;
-            border-width: 0 !important;
-            border-style: none !important;
-            border-color: transparent !important;
-            outline: none !important;
-            box-shadow: none !important;
+        .clickable-update-text:hover {
+            opacity: 0.7;
+            text-decoration: underline;
         }
-        div[data-testid="stSidebar"] .stButton > button:focus {
-            background: transparent !important;
-            border: none !important;
-            border-width: 0 !important;
-            border-style: none !important;
-            border-color: transparent !important;
-            box-shadow: none !important;
-            outline: none !important;
+        </style>
+        <div class="clickable-update-text" onclick="document.querySelector('[data-testid=\"baseButton-secondary\"]').click();">检查更新 🔄</div>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    # 隐藏的按钮来处理实际的点击逻辑
+    update_clicked = st.button("hidden_update", key="hidden_update_btn", 
+                              help="检查是否有新版本可用",
+                              type="secondary")
+    
+    # 隐藏特定按钮的样式
+    st.markdown(
+        """
+        <style>
+        /* 隐藏包含hidden_update文本的按钮 */
+        .stButton button:contains("hidden_update") {
+            display: none !important;
         }
-        div[data-testid="stSidebar"] .stButton > button:active {
-            background: transparent !important;
-            border: none !important;
-            border-width: 0 !important;
-            border-style: none !important;
-            border-color: transparent !important;
-            outline: none !important;
-            box-shadow: none !important;
+        /* 通过位置隐藏最后一个secondary按钮 */
+        .stSidebar .stButton:last-of-type {
+            display: none !important;
         }
-        
-        /* 强制覆盖所有可能的按钮边框样式 */
-        div[data-testid="stSidebar"] button[data-testid="stBaseButton-secondary"] {
-            border-color: #262730 !important; /* 侧边栏背景色 */
-            outline-color: #262730 !important;
-            box-shadow: none !important;
-        }
-        
-        div[data-testid="stSidebar"] button[data-testid="stBaseButton-secondary"]:hover,
-        div[data-testid="stSidebar"] button[data-testid="stBaseButton-secondary"]:focus,
-        div[data-testid="stSidebar"] button[data-testid="stBaseButton-secondary"]:active {
-            border-color: #262730 !important; /* 侧边栏背景色 */
-            outline-color: #262730 !important;
-            box-shadow: none !important;
-        }
-        
-        /* 优化侧边栏整体间距 */
-        div[data-testid="stSidebar"] h3 {
-            margin-top: 1.5rem !important;
-            margin-bottom: 1rem !important;
-        }
-        
-        /* 优化展开器间距 */
-        div[data-testid="stSidebar"] .streamlit-expanderHeader {
-            margin-top: 1rem !important;
-        }
-        
-        /* 优化logo区域间距 */
-         div[data-testid="stSidebar"] > div:first-child {
-             margin-bottom: 1.5rem !important;
-         }
-         
-         /* 全局设置侧边栏所有元素的边框颜色为背景色 */
-         div[data-testid="stSidebar"] *,
-         div[data-testid="stSidebar"] *::before,
-         div[data-testid="stSidebar"] *::after {
-             border-color: #262730 !important; /* 侧边栏背景色 */
-             outline-color: #262730 !important;
-             box-shadow: none !important;
-             background-image: none !important;
-             background-border: none !important;
-             -webkit-appearance: none !important;
-             -moz-appearance: none !important;
-             appearance: none !important;
-             border-image: none !important;
-             border-image-source: none !important;
-         }
-         
-         /* 将边框颜色设置为与侧边栏背景色一致 */
-         div[data-testid="stSidebar"] button {
-             border-color: #262730 !important; /* 侧边栏背景色 */
-         }
-         
-         div[data-testid="stSidebar"] summary {
-             border-color: #262730 !important; /* 侧边栏背景色 */
-         }
-         
-         /* 极端CSS覆盖方法 */
-         div[data-testid="stSidebar"] button,
-         div[data-testid="stSidebar"] summary {
-             filter: none !important;
-             transform: none !important;
-             clip-path: none !important;
-             margin: 0 !important;
-             padding: 0.2rem 0 !important;
-         }
-             text-decoration: none !important;
-         }
-         
-         /* 针对所有可能的交互元素 */
-         div[data-testid="stSidebar"] button,
-         div[data-testid="stSidebar"] summary,
-         div[data-testid="stSidebar"] details,
-         div[data-testid="stSidebar"] input,
-         div[data-testid="stSidebar"] select,
-         div[data-testid="stSidebar"] textarea,
-         div[data-testid="stSidebar"] a,
-         div[data-testid="stSidebar"] .stButton,
-         div[data-testid="stSidebar"] .stExpander {
-             border-color: #262730 !important; /* 侧边栏背景色 */
-             outline-color: #262730 !important;
-             box-shadow: none !important;
-             background-image: none !important;
-             text-decoration: none !important;
-         }
-         
-         /* 所有交互状态的边框颜色设置 */
-         div[data-testid="stSidebar"] button:hover,
-         div[data-testid="stSidebar"] button:focus,
-         div[data-testid="stSidebar"] button:active,
-         div[data-testid="stSidebar"] button:visited,
-         div[data-testid="stSidebar"] summary:hover,
-         div[data-testid="stSidebar"] summary:focus,
-         div[data-testid="stSidebar"] summary:active,
-         div[data-testid="stSidebar"] details:hover,
-         div[data-testid="stSidebar"] details:focus,
-         div[data-testid="stSidebar"] .stButton:hover,
-         div[data-testid="stSidebar"] .stExpander:hover {
-             border-color: #262730 !important; /* 侧边栏背景色 */
-             outline-color: #262730 !important;
-             box-shadow: none !important;
-             background-image: none !important;
-             text-decoration: none !important;
-         }
-         
-         /* 特殊处理Streamlit特定的类 */
-         div[data-testid="stSidebar"] .st-emotion-cache-6ms01g,
-         div[data-testid="stSidebar"] .e7nj0r42,
-         div[data-testid="stSidebar"] .st-emotion-cache-1v6pjqr,
-         div[data-testid="stSidebar"] .etg4nir3 {
-             border-color: #262730 !important; /* 侧边栏背景色 */
-             outline-color: #262730 !important;
-             box-shadow: none !important;
-             background-image: none !important;
-         }
-         
-         /* 强制覆盖任何可能的边框效果 */
-         div[data-testid="stSidebar"] [class*="border"],
-         div[data-testid="stSidebar"] [class*="outline"],
-         div[data-testid="stSidebar"] [class*="shadow"] {
-             border-color: #262730 !important; /* 侧边栏背景色 */
-             outline-color: #262730 !important;
-             box-shadow: none !important;
-             background-image: none !important;
-         }
-         </style>
-         
-         <script>
-         // JavaScript动态边框移除脚本
-         function removeBordersFromSidebar() {
-             console.log('开始执行边框移除脚本...');
-             
-             // 等待DOM加载完成
-             setTimeout(function() {
-                 // 选择所有侧边栏元素
-                 const sidebarElements = document.querySelectorAll('div[data-testid="stSidebar"] *');
-                 console.log('找到侧边栏元素数量:', sidebarElements.length);
-                 
-                 // 遍历所有元素并移除边框
-                 sidebarElements.forEach(function(element, index) {
-                     if (element.tagName === 'BUTTON' || element.tagName === 'SUMMARY') {
-                         console.log('处理元素:', element.tagName, index);
-                         
-                         // 设置边框颜色为侧边栏背景色
-                         element.style.borderColor = '#262730';
-                         element.style.outlineColor = '#262730';
-                         element.style.boxShadow = 'none';
-                         element.style.backgroundImage = 'none';
-                         element.style.borderImage = 'none';
-                         element.style.webkitAppearance = 'none';
-                         element.style.mozAppearance = 'none';
-                         element.style.appearance = 'none';
-                     }
-                 });
-                 
-                 console.log('边框移除脚本执行完成');
-             }, 1000);
-             
-             // 再次执行，确保覆盖动态加载的元素
-             setTimeout(function() {
-                 const buttons = document.querySelectorAll('div[data-testid="stSidebar"] button');
-                 const summaries = document.querySelectorAll('div[data-testid="stSidebar"] summary');
-                 
-                 console.log('第二次执行 - 按钮数量:', buttons.length, '展开器数量:', summaries.length);
-                 
-                 [...buttons, ...summaries].forEach(function(element) {
-                     element.style.setProperty('border-color', '#262730', 'important');
-                     element.style.setProperty('outline-color', '#262730', 'important');
-                     element.style.setProperty('box-shadow', 'none', 'important');
-                 });
-             }, 3000);
-         }
-         
-         // 页面加载时执行
-         if (document.readyState === 'loading') {
-             document.addEventListener('DOMContentLoaded', removeBordersFromSidebar);
-         } else {
-             removeBordersFromSidebar();
-         }
-         
-         // 监听页面变化，处理动态加载的元素
-         const observer = new MutationObserver(function(mutations) {
-             mutations.forEach(function(mutation) {
-                 if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                     setTimeout(removeBordersFromSidebar, 500);
-                 }
-             });
-         });
-         
-         // 开始观察
-         setTimeout(function() {
-             const sidebar = document.querySelector('div[data-testid="stSidebar"]');
-             if (sidebar) {
-                 observer.observe(sidebar, { childList: true, subtree: true });
-                 console.log('开始监听侧边栏变化');
-             }
-         }, 1000);
-         </script>
+        </style>
         """,
         unsafe_allow_html=True
     )
@@ -650,21 +336,21 @@ with st.sidebar:
                             st.markdown(update_info['release_notes'])
                     
                     # 更新按钮
-                    if st.button("⏬ 立即更新", type="primary"):
+                    if st.button("⬇️ 立即更新", type="primary"):
                         with st.spinner("正在下载更新..."):
                             if updater.download_and_install(update_info['download_url']):
-                                st.success("☑️ 更新下载完成，应用将重启")
+                                st.success("✅ 更新下载完成，应用将重启")
                                 st.balloons()
                             else:
                                 st.error("❌ 更新失败，请稍后重试或手动下载")
                 else:
-                    st.success("☑️ 当前已是最新版本")
+                    st.success("✅ 当前已是最新版本")
             except Exception as e:
                 st.warning(f"⚠️ 检查更新失败：{str(e)}")
                 st.info("💡 请检查网络连接或稍后重试")
     
     # 应用信息
-    with st.expander("ABOUT APP ℹ️"):
+    with st.expander("关于应用 ℹ️"):
         st.markdown("""
         **智能会务机票助手**
         
@@ -690,7 +376,7 @@ st.markdown("---")
 
 # --- 核心修改点 1 ---
 # 更新必需列的定义，使其与您Excel文件中的列名（包含空格）完全匹配
-REQUIRED_COLUMNS = ['姓名*', '身份证 (出机票必须填写)', '手机号码 (必填)', '销售手机', '去程车次/航班', '返程车次/航班', '去程交通工具类型', '返程交通工具类型', '去程出发日期', '返程出发日期', '去程出发时间', '去程到达时间', '返程出发时间', '返程到达时间', '去程出发站', '去程到达站', '返程出发站', '返程到达站']
+REQUIRED_COLUMNS = ['姓名*', '身份证 (出机票必须填写)', '手机号码 (必填)', '销售手机', '去程车次/航班', '返程车次/航班', '去程出发日期', '返程出发日期', '去程出发时间', '去程到达时间', '返程出发时间', '返程到达时间', '去程出发站', '去程到达站', '返程出发站', '返程到达站']
 
 # 智能模糊匹配的列名变体配置
 COLUMN_VARIANTS = {
@@ -728,18 +414,6 @@ COLUMN_VARIANTS = {
         '回程车次', '回程航班', '回程航班号', '回程车次号', '返程班次',
         '返程交通', '返程信息', '回程交通', '回程信息', '下行车次',
         '下行航班', '返程', '回程班次', '归程车次', '归程航班'
-    ],
-    '去程交通工具类型': [
-        '去程交通工具类型', '去程交通工具', '去程交通方式', '去程运输方式',
-        '出发交通工具', '出发交通方式', '去程工具类型', '去程方式',
-        '往程交通工具', '往程交通方式', '上行交通工具', '去程运输工具',
-        '出行方式', '去程类型', '交通工具类型', '交通方式'
-    ],
-    '返程交通工具类型': [
-        '返程交通工具类型', '返程交通工具', '返程交通方式', '返程运输方式',
-        '回程交通工具', '回程交通方式', '返程工具类型', '返程方式',
-        '归程交通工具', '归程交通方式', '下行交通工具', '返程运输工具',
-        '回程方式', '返程类型', '回程工具', '归程方式'
     ],
     '去程出发日期': [
         '去程出发日期', '去程日期', '出发日期', '去程时间', '出发时间',
@@ -811,41 +485,39 @@ DEFAULT_COLUMN_MAPPING = {
     '销售手机': 3,   # D列
     '去程车次/航班': 4,   # E列
     '返程车次/航班': 5,   # F列
-    '去程交通工具类型': 6,   # G列
-    '返程交通工具类型': 7,   # H列
-    '去程出发日期': 8,   # I列
-    '返程出发日期': 9,   # J列
-    '去程出发时间': 10,  # K列
-    '去程到达时间': 11,  # L列
-    '返程出发时间': 12,  # M列
-    '返程到达时间': 13,  # N列
-    '去程出发站': 14,   # O列
-    '去程到达站': 15,   # P列
-    '返程出发站': 16,   # Q列
-    '返程到达站': 17    # R列
+    '去程出发日期': 6,   # G列
+    '返程出发日期': 7,   # H列
+    '去程出发时间': 8,   # I列
+    '去程到达时间': 9,   # J列
+    '返程出发时间': 10,  # K列
+    '返程到达时间': 11,  # L列
+    '去程出发站': 12,   # M列
+    '去程到达站': 13,   # N列
+    '返程出发站': 14,   # O列
+    '返程到达站': 15    # P列
 }
 
 # 常见Excel格式预设配置
 PRESET_CONFIGURATIONS = {
     '标准格式': {
-        'description': '姓名-身份证-手机号-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (A-R列)',
-        'mapping': {'姓名*': 0, '身份证 (出机票必须填写)': 1, '手机号码 (必填)': 2, '销售手机': 3, '去程车次/航班': 4, '返程车次/航班': 5, '去程交通工具类型': 6, '返程交通工具类型': 7, '去程出发日期': 8, '返程出发日期': 9, '去程出发时间': 10, '去程到达时间': 11, '返程出发时间': 12, '返程到达时间': 13, '去程出发站': 14, '去程到达站': 15, '返程出发站': 16, '返程到达站': 17}
+        'description': '姓名-身份证-手机号-销售手机-去程车次-返程车次-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (A-P列)',
+        'mapping': {'姓名*': 0, '身份证 (出机票必须填写)': 1, '手机号码 (必填)': 2, '销售手机': 3, '去程车次/航班': 4, '返程车次/航班': 5, '去程出发日期': 6, '返程出发日期': 7, '去程出发时间': 8, '去程到达时间': 9, '返程出发时间': 10, '返程到达时间': 11, '去程出发站': 12, '去程到达站': 13, '返程出发站': 14, '返程到达站': 15}
     },
     '会议格式1': {
-        'description': '序号-姓名-身份证-手机号-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (B-S列)',
-        'mapping': {'姓名*': 1, '身份证 (出机票必须填写)': 2, '手机号码 (必填)': 3, '销售手机': 4, '去程车次/航班': 5, '返程车次/航班': 6, '去程交通工具类型': 7, '返程交通工具类型': 8, '去程出发日期': 9, '返程出发日期': 10, '去程出发时间': 11, '去程到达时间': 12, '返程出发时间': 13, '返程到达时间': 14, '去程出发站': 15, '去程到达站': 16, '返程出发站': 17, '返程到达站': 18}
+        'description': '序号-姓名-身份证-手机号-销售手机-去程车次-返程车次-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (B-Q列)',
+        'mapping': {'姓名*': 1, '身份证 (出机票必须填写)': 2, '手机号码 (必填)': 3, '销售手机': 4, '去程车次/航班': 5, '返程车次/航班': 6, '去程出发日期': 7, '返程出发日期': 8, '去程出发时间': 9, '去程到达时间': 10, '返程出发时间': 11, '返程到达时间': 12, '去程出发站': 13, '去程到达站': 14, '返程出发站': 15, '返程到达站': 16}
     },
     '会议格式2': {
-        'description': '姓名-手机号-身份证-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (A-R列)',
-        'mapping': {'姓名*': 0, '手机号码 (必填)': 1, '身份证 (出机票必须填写)': 2, '销售手机': 3, '去程车次/航班': 4, '返程车次/航班': 5, '去程交通工具类型': 6, '返程交通工具类型': 7, '去程出发日期': 8, '返程出发日期': 9, '去程出发时间': 10, '去程到达时间': 11, '返程出发时间': 12, '返程到达时间': 13, '去程出发站': 14, '去程到达站': 15, '返程出发站': 16, '返程到达站': 17}
+        'description': '姓名-手机号-身份证-销售手机-去程车次-返程车次-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (A-P列)',
+        'mapping': {'姓名*': 0, '手机号码 (必填)': 1, '身份证 (出机票必须填写)': 2, '销售手机': 3, '去程车次/航班': 4, '返程车次/航班': 5, '去程出发日期': 6, '返程出发日期': 7, '去程出发时间': 8, '去程到达时间': 9, '返程出发时间': 10, '返程到达时间': 11, '去程出发站': 12, '去程到达站': 13, '返程出发站': 14, '返程到达站': 15}
     },
     '专家表格': {
-        'description': '序号-专家姓名-联系电话-身份证号-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (B-S列)',
-        'mapping': {'姓名*': 1, '手机号码 (必填)': 2, '身份证 (出机票必须填写)': 3, '销售手机': 4, '去程车次/航班': 5, '返程车次/航班': 6, '去程交通工具类型': 7, '返程交通工具类型': 8, '去程出发日期': 9, '返程出发日期': 10, '去程出发时间': 11, '去程到达时间': 12, '返程出发时间': 13, '返程到达时间': 14, '去程出发站': 15, '去程到达站': 16, '返程出发站': 17, '返程到达站': 18}
+        'description': '序号-专家姓名-联系电话-身份证号-销售手机-去程车次-返程车次-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (B-Q列)',
+        'mapping': {'姓名*': 1, '手机号码 (必填)': 2, '身份证 (出机票必须填写)': 3, '销售手机': 4, '去程车次/航班': 5, '返程车次/航班': 6, '去程出发日期': 7, '返程出发日期': 8, '去程出发时间': 9, '去程到达时间': 10, '返程出发时间': 11, '返程到达时间': 12, '去程出发站': 13, '去程到达站': 14, '返程出发站': 15, '返程到达站': 16}
     },
     '参会人员': {
-        'description': '姓名-证件号-电话-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (A-R列)',
-        'mapping': {'姓名*': 0, '身份证 (出机票必须填写)': 1, '手机号码 (必填)': 2, '销售手机': 3, '去程车次/航班': 4, '返程车次/航班': 5, '去程交通工具类型': 6, '返程交通工具类型': 7, '去程出发日期': 8, '返程出发日期': 9, '去程出发时间': 10, '去程到达时间': 11, '返程出发时间': 12, '返程到达时间': 13, '去程出发站': 14, '去程到达站': 15, '返程出发站': 16, '返程到达站': 17}
+        'description': '姓名-证件号-电话-销售手机-去程车次-返程车次-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (A-P列)',
+        'mapping': {'姓名*': 0, '身份证 (出机票必须填写)': 1, '手机号码 (必填)': 2, '销售手机': 3, '去程车次/航班': 4, '返程车次/航班': 5, '去程出发日期': 6, '返程出发日期': 7, '去程出发时间': 8, '去程到达时间': 9, '返程出发时间': 10, '返程到达时间': 11, '去程出发站': 12, '去程到达站': 13, '返程出发站': 14, '返程到达站': 15}
     }
 }
 
@@ -961,57 +633,6 @@ def parse_time_field(value):
     
     # 如果都失败了，返回None
     return None
-
-def detect_transport_type(flight_number):
-    """根据车次/航班号自动识别交通工具类型"""
-    if pd.isna(flight_number) or flight_number is None:
-        return "未知"
-    
-    # 转换为字符串并清理
-    flight_str = str(flight_number).strip().upper()
-    if not flight_str:
-        return "未知"
-    
-    # 飞机航班号规律：通常是2个字母+数字
-    # 常见航空公司代码：CA(国航), MU(东航), CZ(南航), HU(海航), 3U(川航), etc.
-    airline_codes = [
-        'CA', 'MU', 'CZ', 'HU', '3U', 'SC', 'JD', 'EU', 'GS', 'BK', 'TV', 'DR',
-        'FM', 'MF', 'KN', 'NS', 'PN', 'QW', 'UQ', 'Y8', 'G5', 'JR', 'OQ', 'VD'
-    ]
-    
-    # 检查是否为航班号
-    for code in airline_codes:
-        if flight_str.startswith(code) and len(flight_str) > 2:
-            # 检查后面是否为数字
-            remaining = flight_str[len(code):]
-            if remaining.isdigit():
-                return "飞机"
-    
-    # 通用航班号模式：2个字母+数字
-    if re.match(r'^[A-Z]{2}\d+$', flight_str):
-        return "飞机"
-    
-    # 高铁车次规律
-    if re.match(r'^[GDC]\d+$', flight_str):
-        if flight_str.startswith('G'):
-            return "高铁"  # G字头：高速动车组
-        elif flight_str.startswith('D'):
-            return "高铁"  # D字头：动车组
-        elif flight_str.startswith('C'):
-            return "高铁"  # C字头：城际动车组
-    
-    # 普通火车车次规律
-    train_prefixes = ['K', 'T', 'Z', 'L', 'Y', 'S']
-    for prefix in train_prefixes:
-        if flight_str.startswith(prefix) and re.match(f'^{prefix}\d+$', flight_str):
-            return "火车"
-    
-    # 纯数字车次（通常是普通列车）
-    if flight_str.isdigit():
-        return "火车"
-    
-    # 如果都不匹配，返回未知
-    return "未知"
 
 def clean_data_field(value, field_type):
     """清洗数据字段，去除空格和多余字符"""
@@ -1183,24 +804,6 @@ def apply_manual_mapping(df, column_mapping):
                     col_data = col_data.apply(lambda x: clean_data_field(x, '姓名'))
                 elif required_col in ['去程车次/航班', '返程车次/航班']:
                     col_data = col_data.apply(lambda x: clean_data_field(x, '车次航班'))
-                elif required_col in ['去程交通工具类型', '返程交通工具类型']:
-                    # 对于交通工具类型字段，基于对应的车次/航班号自动识别
-                    if required_col == '去程交通工具类型':
-                        # 获取去程车次/航班数据
-                        flight_col_data = mapped_data.get('去程车次/航班')
-                        if flight_col_data is not None:
-                            col_data = flight_col_data.apply(detect_transport_type)
-                        else:
-                            # 如果没有车次/航班数据，尝试从当前列获取
-                            col_data = col_data.apply(detect_transport_type)
-                    else:  # 返程交通工具类型
-                        # 获取返程车次/航班数据
-                        flight_col_data = mapped_data.get('返程车次/航班')
-                        if flight_col_data is not None:
-                            col_data = flight_col_data.apply(detect_transport_type)
-                        else:
-                            # 如果没有车次/航班数据，尝试从当前列获取
-                            col_data = col_data.apply(detect_transport_type)
                 elif required_col in ['去程出发时间', '去程到达时间', '返程出发时间', '返程到达时间']:
                     # 对于时间字段，直接转换为字符串格式，不进行复杂解析
                     def process_time_field(x):
@@ -2000,16 +1603,6 @@ if st.session_state.expert_data is not None:
 outbound_flight_val = safe_get_value(st.session_state.expert_data, '去程车次/航班')
 return_flight_val = safe_get_value(st.session_state.expert_data, '返程车次/航班')
 
-# 获取交通工具类型数据
-outbound_transport_type = safe_get_value(st.session_state.expert_data, '去程交通工具类型')
-return_transport_type = safe_get_value(st.session_state.expert_data, '返程交通工具类型')
-
-# 如果没有从Excel获取到交通工具类型，则基于车次/航班号自动识别
-if not outbound_transport_type and outbound_flight_val:
-    outbound_transport_type = detect_transport_type(outbound_flight_val)
-if not return_transport_type and return_flight_val:
-    return_transport_type = detect_transport_type(return_flight_val)
-
 # 获取站点信息
 outbound_from_val = safe_get_value(st.session_state.expert_data, '去程出发站')
 outbound_to_val = safe_get_value(st.session_state.expert_data, '去程到达站')
@@ -2078,26 +1671,9 @@ st.subheader("交通信息详细填写：")
 
 # 去程信息
 st.markdown("### 🛫 去程信息")
-
-# 去程交通工具类型提醒
-if outbound_transport_type:
-    if outbound_transport_type == "飞机":
-        st.success(f"✈️ 去程交通工具：{outbound_transport_type} - 可正常处理机票业务")
-    elif outbound_transport_type in ["高铁", "火车"]:
-        st.warning(f"🚄 去程交通工具：{outbound_transport_type} - ⚠️ 注意：这不是机票！请确认是否需要火车票业务")
-    elif outbound_transport_type == "未知":
-        st.info(f"❓ 去程交通工具：{outbound_transport_type} - 请人工确认交通工具类型")
-    else:
-        st.info(f"🚌 去程交通工具：{outbound_transport_type} - 请确认交通工具类型")
-
 col_out1, col_out2, col_out3, col_out4 = st.columns(4)
 with col_out1:
-    # 根据识别的交通工具类型设置默认值
-    transport_options = ["飞机", "高铁", "火车", "汽车"]
-    default_index = 0
-    if outbound_transport_type in transport_options:
-        default_index = transport_options.index(outbound_transport_type)
-    outbound_transport = st.selectbox("交通方式", transport_options, index=default_index, key="outbound_transport")
+    outbound_transport = st.selectbox("交通方式", ["飞机", "高铁", "火车", "汽车"], key="outbound_transport")
     outbound_date = st.date_input("出发日期", value=outbound_date_val, key="outbound_date", help="已从表格自动填充，可手动修改" if outbound_date_val else None)
 with col_out2:
     outbound_flight = st.text_input("车次/航班号", value=outbound_flight_val, placeholder="如：CA1234", key="outbound_flight", help="已从表格自动填充，可手动修改")
@@ -2110,26 +1686,9 @@ with col_out4:
 
 # 返程信息
 st.markdown("### 🛬 返程信息")
-
-# 返程交通工具类型提醒
-if return_transport_type:
-    if return_transport_type == "飞机":
-        st.success(f"✈️ 返程交通工具：{return_transport_type} - 可正常处理机票业务")
-    elif return_transport_type in ["高铁", "火车"]:
-        st.warning(f"🚄 返程交通工具：{return_transport_type} - ⚠️ 注意：这不是机票！请确认是否需要火车票业务")
-    elif return_transport_type == "未知":
-        st.info(f"❓ 返程交通工具：{return_transport_type} - 请人工确认交通工具类型")
-    else:
-        st.info(f"🚌 返程交通工具：{return_transport_type} - 请确认交通工具类型")
-
 col_ret1, col_ret2, col_ret3, col_ret4 = st.columns(4)
 with col_ret1:
-    # 根据识别的交通工具类型设置默认值
-    transport_options = ["飞机", "高铁", "火车", "汽车"]
-    default_index = 0
-    if return_transport_type in transport_options:
-        default_index = transport_options.index(return_transport_type)
-    return_transport = st.selectbox("交通方式", transport_options, index=default_index, key="return_transport")
+    return_transport = st.selectbox("交通方式", ["飞机", "高铁", "火车", "汽车"], key="return_transport")
     return_date = st.date_input("出发日期", value=return_date_val, key="return_date", help="已从表格自动填充，可手动修改" if return_date_val else None)
 with col_ret2:
     return_flight = st.text_input("车次/航班号", value=return_flight_val, placeholder="如：CA5678", key="return_flight", help="已从表格自动填充，可手动修改")
