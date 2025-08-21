@@ -1,4 +1,4 @@
-﻿import streamlit as st
+import streamlit as st
 import pandas as pd
 import re
 import json
@@ -1100,8 +1100,22 @@ def clean_data_field(value, field_type):
         return clean_value
     
     elif field_type == '身份证':
+        # 处理科学计数法格式的身份证号码
+        if 'e+' in clean_value.lower() or 'e-' in clean_value.lower():
+            try:
+                # 尝试将科学计数法转换为整数，然后转为字符串
+                numeric_value = float(clean_value)
+                clean_value = f"{numeric_value:.0f}"
+            except ValueError:
+                pass  # 如果转换失败，保持原值
+        
         # 清洗身份证：去除空格、连字符
         clean_value = re.sub(r'[\s\-]', '', clean_value)
+        
+        # 确保身份证号码是字符串格式，处理可能的浮点数
+        if '.' in clean_value and clean_value.replace('.', '').isdigit():
+            clean_value = clean_value.split('.')[0]  # 去除小数点
+        
         # 确保是18位（包含最后一位可能的X）
         if len(clean_value) == 18:
             return clean_value.upper()  # X要大写
@@ -1715,8 +1729,9 @@ def smart_read_excel(uploaded_file):
     # 首先尝试读取原始数据查看结构
     st.write("🔍 分析Excel文件结构...")
     try:
-        # 读取前10行原始数据
-        raw_df = pd.read_excel(uploaded_file, header=None, nrows=10, engine='calamine')
+        # 读取前10行原始数据，强制所有列为字符串类型
+        dtype_dict = {i: str for i in range(50)}  # 预设前50列为字符串类型
+        raw_df = pd.read_excel(uploaded_file, header=None, nrows=10, engine='calamine', dtype=dtype_dict)
         st.write("📋 Excel文件前10行原始数据:")
         # 使用安全的方式显示数据，避免pyarrow问题
         if not raw_df.empty:
@@ -1750,11 +1765,17 @@ def smart_read_excel(uploaded_file):
                 try:
                     st.write(f"  📋 尝试 skiprows={skiprows}, header={header_val}...")
                     
-                    # 尝试读取数据
+                    # 尝试读取数据，强制身份证列为字符串类型避免科学计数法
+                    dtype_dict = {
+                        # 预设可能的身份证列索引为字符串类型
+                        0: str, 1: str, 2: str, 3: str, 4: str, 5: str, 6: str, 7: str, 8: str, 9: str,
+                        10: str, 11: str, 12: str, 13: str, 14: str, 15: str, 16: str, 17: str, 18: str, 19: str
+                    }
+                    
                     if skiprows > 0:
-                        df = pd.read_excel(uploaded_file, header=header_val, skiprows=skiprows, engine=engine)
+                        df = pd.read_excel(uploaded_file, header=header_val, skiprows=skiprows, engine=engine, dtype=dtype_dict)
                     else:
-                        df = pd.read_excel(uploaded_file, header=header_val, engine=engine)
+                        df = pd.read_excel(uploaded_file, header=header_val, engine=engine, dtype=dtype_dict)
                     
                     # 跳过空的DataFrame
                     if df.empty:
@@ -1861,8 +1882,9 @@ def smart_read_excel(uploaded_file):
     # 如果所有尝试都失败，尝试使用保存的映射配置
     st.write("🔧 尝试使用保存的列映射配置...")
     try:
-        # 读取原始数据（不指定header）
-        df_raw = pd.read_excel(uploaded_file, header=None, engine='calamine')
+        # 读取原始数据（不指定header），强制所有列为字符串类型
+        dtype_dict = {i: str for i in range(50)}  # 预设前50列为字符串类型
+        df_raw = pd.read_excel(uploaded_file, header=None, engine='calamine', dtype=dtype_dict)
         if not df_raw.empty:
             # 尝试使用保存的映射配置
             saved_mapping = load_column_mapping()
@@ -2516,7 +2538,7 @@ with col4:
             lines = cleaned_text.split('\n')
             non_empty_lines = [line.strip() for line in lines if line.strip()]
             final_text = '\n'.join(non_empty_lines)
-            expert_confirmation_text = f"【请确认以下航班信息】\n{final_text}"
+            expert_confirmation_text = f"【请确认以下航班信息】\n{final_text}\n请您核对老师的机票预定信息，如无问题请回复出票[抱拳]出票短信同步发送给您~"
             st.code(expert_confirmation_text, language="text")
             st.success("价格已移除！请点击右上角复制按钮，将此信息发送给专家确认。")
         else:
