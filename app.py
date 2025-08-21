@@ -1,4 +1,4 @@
-﻿import streamlit as st
+import streamlit as st
 import pandas as pd
 import re
 import json
@@ -690,7 +690,7 @@ st.markdown("---")
 
 # --- 核心修改点 1 ---
 # 更新必需列的定义，使其与您Excel文件中的列名（包含空格）完全匹配
-REQUIRED_COLUMNS = ['姓名*', '身份证 (出机票必须填写)', '手机号码 (必填)', '销售手机', '去程车次/航班', '返程车次/航班', '去程交通工具类型', '返程交通工具类型', '去程出发日期', '返程出发日期', '去程出发时间', '去程到达时间', '返程出发时间', '返程到达时间', '去程出发站', '去程到达站', '返程出发站', '返程到达站']
+REQUIRED_COLUMNS = ['姓名*', '身份证 (出机票必须填写)', '手机号码 (必填)', '销售手机', '去程车次/航班', '返程车次/航班', '去程交通工具类型', '返程交通工具类型', '去程出发日期', '返程出发日期', '去程出发时间', '去程到达时间', '返程出发时间', '返程到达时间', '去程出发站', '去程到达站', '返程出发站', '返程到达站', '备注']
 
 # 智能模糊匹配的列名变体配置
 COLUMN_VARIANTS = {
@@ -800,6 +800,14 @@ COLUMN_VARIANTS = {
         '回程抵达时间', '返程到达时刻', '回程到达时刻', '返程结束时间', '回程终点时间',
         '返程到站', '回程到站时间', '返程到时', '回程班次到达', '归程到达时间',
         'return_arrival_time', 'inbound_arrival_time', '返程到站', '回程时分'
+    ],
+    '备注': [
+        '备注', '备注信息', '备注说明', '说明', '注释', '补充说明', '附加信息',
+        '状态', '出票状态', '票务状态', '处理状态', '完成状态', '进度状态',
+        '机票状态', '出票情况', '票务情况', '处理情况', '完成情况',
+        '机票已出', '出票完成', '已出票', '已完成', '票已出', '已处理',
+        'remark', 'remarks', 'note', 'notes', 'comment', 'comments', 'status',
+        '其他', '其它', '额外信息', '特殊说明', '重要提醒'
     ]
 }
 
@@ -822,30 +830,31 @@ DEFAULT_COLUMN_MAPPING = {
     '去程出发站': 14,   # O列
     '去程到达站': 15,   # P列
     '返程出发站': 16,   # Q列
-    '返程到达站': 17    # R列
+    '返程到达站': 17,   # R列
+    '备注': 18    # S列
 }
 
 # 常见Excel格式预设配置
 PRESET_CONFIGURATIONS = {
     '标准格式': {
-        'description': '姓名-身份证-手机号-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (A-R列)',
-        'mapping': {'姓名*': 0, '身份证 (出机票必须填写)': 1, '手机号码 (必填)': 2, '销售手机': 3, '去程车次/航班': 4, '返程车次/航班': 5, '去程交通工具类型': 6, '返程交通工具类型': 7, '去程出发日期': 8, '返程出发日期': 9, '去程出发时间': 10, '去程到达时间': 11, '返程出发时间': 12, '返程到达时间': 13, '去程出发站': 14, '去程到达站': 15, '返程出发站': 16, '返程到达站': 17}
+        'description': '姓名-身份证-手机号-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站-备注 (A-S列)',
+        'mapping': {'姓名*': 0, '身份证 (出机票必须填写)': 1, '手机号码 (必填)': 2, '销售手机': 3, '去程车次/航班': 4, '返程车次/航班': 5, '去程交通工具类型': 6, '返程交通工具类型': 7, '去程出发日期': 8, '返程出发日期': 9, '去程出发时间': 10, '去程到达时间': 11, '返程出发时间': 12, '返程到达时间': 13, '去程出发站': 14, '去程到达站': 15, '返程出发站': 16, '返程到达站': 17, '备注': 18}
     },
     '会议格式1': {
-        'description': '序号-姓名-身份证-手机号-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (B-S列)',
-        'mapping': {'姓名*': 1, '身份证 (出机票必须填写)': 2, '手机号码 (必填)': 3, '销售手机': 4, '去程车次/航班': 5, '返程车次/航班': 6, '去程交通工具类型': 7, '返程交通工具类型': 8, '去程出发日期': 9, '返程出发日期': 10, '去程出发时间': 11, '去程到达时间': 12, '返程出发时间': 13, '返程到达时间': 14, '去程出发站': 15, '去程到达站': 16, '返程出发站': 17, '返程到达站': 18}
+        'description': '序号-姓名-身份证-手机号-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站-备注 (B-T列)',
+        'mapping': {'姓名*': 1, '身份证 (出机票必须填写)': 2, '手机号码 (必填)': 3, '销售手机': 4, '去程车次/航班': 5, '返程车次/航班': 6, '去程交通工具类型': 7, '返程交通工具类型': 8, '去程出发日期': 9, '返程出发日期': 10, '去程出发时间': 11, '去程到达时间': 12, '返程出发时间': 13, '返程到达时间': 14, '去程出发站': 15, '去程到达站': 16, '返程出发站': 17, '返程到达站': 18, '备注': 19}
     },
     '会议格式2': {
-        'description': '姓名-手机号-身份证-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (A-R列)',
-        'mapping': {'姓名*': 0, '手机号码 (必填)': 1, '身份证 (出机票必须填写)': 2, '销售手机': 3, '去程车次/航班': 4, '返程车次/航班': 5, '去程交通工具类型': 6, '返程交通工具类型': 7, '去程出发日期': 8, '返程出发日期': 9, '去程出发时间': 10, '去程到达时间': 11, '返程出发时间': 12, '返程到达时间': 13, '去程出发站': 14, '去程到达站': 15, '返程出发站': 16, '返程到达站': 17}
+        'description': '姓名-手机号-身份证-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站-备注 (A-S列)',
+        'mapping': {'姓名*': 0, '手机号码 (必填)': 1, '身份证 (出机票必须填写)': 2, '销售手机': 3, '去程车次/航班': 4, '返程车次/航班': 5, '去程交通工具类型': 6, '返程交通工具类型': 7, '去程出发日期': 8, '返程出发日期': 9, '去程出发时间': 10, '去程到达时间': 11, '返程出发时间': 12, '返程到达时间': 13, '去程出发站': 14, '去程到达站': 15, '返程出发站': 16, '返程到达站': 17, '备注': 18}
     },
     '专家表格': {
-        'description': '序号-专家姓名-联系电话-身份证号-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (B-S列)',
-        'mapping': {'姓名*': 1, '手机号码 (必填)': 2, '身份证 (出机票必须填写)': 3, '销售手机': 4, '去程车次/航班': 5, '返程车次/航班': 6, '去程交通工具类型': 7, '返程交通工具类型': 8, '去程出发日期': 9, '返程出发日期': 10, '去程出发时间': 11, '去程到达时间': 12, '返程出发时间': 13, '返程到达时间': 14, '去程出发站': 15, '去程到达站': 16, '返程出发站': 17, '返程到达站': 18}
+        'description': '序号-专家姓名-联系电话-身份证号-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站-备注 (B-T列)',
+        'mapping': {'姓名*': 1, '手机号码 (必填)': 2, '身份证 (出机票必须填写)': 3, '销售手机': 4, '去程车次/航班': 5, '返程车次/航班': 6, '去程交通工具类型': 7, '返程交通工具类型': 8, '去程出发日期': 9, '返程出发日期': 10, '去程出发时间': 11, '去程到达时间': 12, '返程出发时间': 13, '返程到达时间': 14, '去程出发站': 15, '去程到达站': 16, '返程出发站': 17, '返程到达站': 18, '备注': 19}
     },
     '参会人员': {
-        'description': '姓名-证件号-电话-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站 (A-R列)',
-        'mapping': {'姓名*': 0, '身份证 (出机票必须填写)': 1, '手机号码 (必填)': 2, '销售手机': 3, '去程车次/航班': 4, '返程车次/航班': 5, '去程交通工具类型': 6, '返程交通工具类型': 7, '去程出发日期': 8, '返程出发日期': 9, '去程出发时间': 10, '去程到达时间': 11, '返程出发时间': 12, '返程到达时间': 13, '去程出发站': 14, '去程到达站': 15, '返程出发站': 16, '返程到达站': 17}
+        'description': '姓名-证件号-电话-销售手机-去程车次-返程车次-去程交通工具-返程交通工具-去程日期-返程日期-去程出发时间-去程到达时间-返程出发时间-返程到达时间-去程出发站-去程到达站-返程出发站-返程到达站-备注 (A-S列)',
+        'mapping': {'姓名*': 0, '身份证 (出机票必须填写)': 1, '手机号码 (必填)': 2, '销售手机': 3, '去程车次/航班': 4, '返程车次/航班': 5, '去程交通工具类型': 6, '返程交通工具类型': 7, '去程出发日期': 8, '返程出发日期': 9, '去程出发时间': 10, '去程到达时间': 11, '返程出发时间': 12, '返程到达时间': 13, '去程出发站': 14, '去程到达站': 15, '返程出发站': 16, '返程到达站': 17, '备注': 18}
     }
 }
 
@@ -1012,6 +1021,42 @@ def detect_transport_type(flight_number):
     
     # 如果都不匹配，返回未知
     return "未知"
+
+def is_ticket_completed(remark_text):
+    """根据备注内容判断是否已完成出票"""
+    if pd.isna(remark_text) or remark_text is None:
+        return False
+    
+    # 转换为字符串并清理
+    remark_str = str(remark_text).strip().lower()
+    if not remark_str:
+        return False
+    
+    # 定义已完成出票的关键词
+    COMPLETED_KEYWORDS = [
+        # 直接表示完成的词汇
+        '机票已出', '出票完成', '已出票', '已完成', '票已出', '已处理',
+        '出票成功', '成功出票', '票务完成', '处理完成', '完成出票',
+        
+        # 状态词汇
+        '已确认', '确认完成', '已发送', '发送完成', '已通知',
+        '通知完成', '已安排', '安排完成', '已预订', '预订完成',
+        
+        # 英文关键词
+        'completed', 'finished', 'done', 'issued', 'confirmed',
+        'sent', 'arranged', 'booked', 'processed',
+        
+        # 其他表示完成的词汇
+        '✓', '√', '完成', '好了', '搞定', '弄好了', 'ok', 'OK',
+        '没问题', '已搞定', '已弄好', '处理好了', '安排好了'
+    ]
+    
+    # 检查是否包含完成关键词
+    for keyword in COMPLETED_KEYWORDS:
+        if keyword.lower() in remark_str:
+            return True
+    
+    return False
 
 def clean_data_field(value, field_type):
     """清洗数据字段，去除空格和多余字符"""
@@ -1212,13 +1257,29 @@ def apply_manual_mapping(df, column_mapping):
                             return None
                         return time_str
                     col_data = col_data.apply(process_time_field)
+                elif required_col == '备注':
+                    # 对于备注字段，进行基本清洗并保持原始内容
+                    def process_remark_field(x):
+                        if pd.isna(x) or x is None:
+                            return None
+                        # 转换为字符串并清理
+                        remark_str = str(x).strip()
+                        if remark_str.lower() in ['nan', 'none', '', 'null']:
+                            return None
+                        return remark_str
+                    col_data = col_data.apply(process_remark_field)
                 else:
                     # 对于其他字段，进行基本清洗
                     col_data = col_data.apply(lambda x: clean_data_field(x, '其他') if not pd.isna(x) else x)
                 
                 mapped_data[required_col] = col_data
             else:
-                mapped_data[required_col] = None
+                # 对于没有映射的列，设置为None或默认值
+                if required_col == '备注':
+                    # 备注字段如果没有映射，创建空的Series以保持兼容性
+                    mapped_data[required_col] = pd.Series([None] * len(df), dtype='object')
+                else:
+                    mapped_data[required_col] = None
         
         new_df = pd.DataFrame(mapped_data)
         
@@ -1406,91 +1467,195 @@ def show_manual_mapping_ui(df):
     column_mapping = {}
     col_options = [f"列 {i} ({col})" for i, col in enumerate(df.columns)]
     
-    # 使用列布局使界面更紧凑
-    col1, col2 = st.columns(2)
-    col3, col4 = st.columns(2)
+    # 动态创建所有字段的选择器
+    # 定义字段图标和帮助文本
+    field_icons = {
+        '姓名*': '👤',
+        '身份证 (出机票必须填写)': '🆔',
+        '手机号码 (必填)': '📱',
+        '销售手机': '📞',
+        '去程车次/航班': '✈️',
+        '返程车次/航班': '🔄',
+        '去程交通工具类型': '🚗',
+        '返程交通工具类型': '🚙',
+        '去程出发日期': '📅',
+        '返程出发日期': '📆',
+        '去程出发时间': '⏰',
+        '去程到达时间': '⏱️',
+        '返程出发时间': '🕐',
+        '返程到达时间': '🕑',
+        '去程出发站': '🏢',
+        '去程到达站': '🏬',
+        '返程出发站': '🏪',
+        '返程到达站': '🏫',
+        '备注': '📝'
+    }
     
-    with col1:
-        required_col = REQUIRED_COLUMNS[0]  # 姓名
-        # 优先使用智能推荐，其次使用保存的配置
-        default_index = detected_mapping.get(required_col, saved_mapping.get(required_col, 0))
-        if default_index >= len(col_options):
-            default_index = 0
-        
-        # 添加推荐标识
-        label = f"👤 {required_col}"
-        if required_col in detected_mapping:
-            conf = confidence_scores.get(required_col, 0)
-            label += f" 🤖(推荐: {conf:.2f})"
-            
-        selected = st.selectbox(
-            label,
-            col_options,
-            index=default_index,
-            key=f"mapping_{required_col}",
-            help="选择包含姓名信息的列"
-        )
-        column_mapping[required_col] = int(selected.split(' ')[1])
+    field_help = {
+        '姓名*': '选择包含姓名信息的列',
+        '身份证 (出机票必须填写)': '选择包含身份证号的列',
+        '手机号码 (必填)': '选择包含手机号码的列',
+        '销售手机': '选择包含销售手机号的列（用于接收出票短信）',
+        '去程车次/航班': '选择包含去程车次或航班号的列',
+        '返程车次/航班': '选择包含返程车次或航班号的列',
+        '去程交通工具类型': '选择包含去程交通工具类型的列（可自动识别）',
+        '返程交通工具类型': '选择包含返程交通工具类型的列（可自动识别）',
+        '去程出发日期': '选择包含去程出发日期的列',
+        '返程出发日期': '选择包含返程出发日期的列',
+        '去程出发时间': '选择包含去程出发时间的列',
+        '去程到达时间': '选择包含去程到达时间的列',
+        '返程出发时间': '选择包含返程出发时间的列',
+        '返程到达时间': '选择包含返程到达时间的列',
+        '去程出发站': '选择包含去程出发站的列',
+        '去程到达站': '选择包含去程到达站的列',
+        '返程出发站': '选择包含返程出发站的列',
+        '返程到达站': '选择包含返程到达站的列',
+        '备注': '选择包含备注信息的列（用于状态筛选）'
+    }
     
-    with col2:
-        required_col = REQUIRED_COLUMNS[1]  # 身份证
-        default_index = detected_mapping.get(required_col, saved_mapping.get(required_col, 1))
-        if default_index >= len(col_options):
-            default_index = 1 if len(col_options) > 1 else 0
+    # 分组显示字段选择器
+    st.markdown("#### 📋 基本信息字段")
+    cols = st.columns(4)
+    basic_fields = ['姓名*', '身份证 (出机票必须填写)', '手机号码 (必填)', '销售手机']
+    for i, required_col in enumerate(basic_fields):
+        with cols[i]:
+            default_index = detected_mapping.get(required_col, saved_mapping.get(required_col, i))
+            if default_index >= len(col_options):
+                default_index = i if i < len(col_options) else 0
             
-        label = f"🆔 {required_col}"
-        if required_col in detected_mapping:
-            conf = confidence_scores.get(required_col, 0)
-            label += f" 🤖(推荐: {conf:.2f})"
-            
-        selected = st.selectbox(
-            label,
-            col_options,
-            index=default_index,
-            key=f"mapping_{required_col}",
-            help="选择包含身份证号的列"
-        )
-        column_mapping[required_col] = int(selected.split(' ')[1])
+            icon = field_icons.get(required_col, '📄')
+            label = f"{icon} {required_col}"
+            if required_col in detected_mapping:
+                conf = confidence_scores.get(required_col, 0)
+                label += f" 🤖({conf:.2f})"
+                
+            selected = st.selectbox(
+                label,
+                col_options,
+                index=default_index,
+                key=f"mapping_{required_col}",
+                help=field_help.get(required_col, "选择对应的列")
+            )
+            column_mapping[required_col] = int(selected.split(' ')[1])
     
-    with col3:
-        required_col = REQUIRED_COLUMNS[2]  # 手机号
-        default_index = detected_mapping.get(required_col, saved_mapping.get(required_col, 2))
-        if default_index >= len(col_options):
-            default_index = 2 if len(col_options) > 2 else 0
+    st.markdown("#### 🚗 交通信息字段")
+    cols = st.columns(4)
+    transport_fields = ['去程车次/航班', '返程车次/航班', '去程交通工具类型', '返程交通工具类型']
+    for i, required_col in enumerate(transport_fields):
+        with cols[i]:
+            default_index = detected_mapping.get(required_col, saved_mapping.get(required_col, i + 4))
+            if default_index >= len(col_options):
+                default_index = (i + 4) if (i + 4) < len(col_options) else 0
             
-        label = f"📱 {required_col}"
-        if required_col in detected_mapping:
-            conf = confidence_scores.get(required_col, 0)
-            label += f" 🤖(推荐: {conf:.2f})"
-            
-        selected = st.selectbox(
-            label,
-            col_options,
-            index=default_index,
-            key=f"mapping_{required_col}",
-            help="选择包含手机号码的列"
-        )
-        column_mapping[required_col] = int(selected.split(' ')[1])
+            icon = field_icons.get(required_col, '📄')
+            label = f"{icon} {required_col}"
+            if required_col in detected_mapping:
+                conf = confidence_scores.get(required_col, 0)
+                label += f" 🤖({conf:.2f})"
+                
+            selected = st.selectbox(
+                label,
+                col_options,
+                index=default_index,
+                key=f"mapping_{required_col}",
+                help=field_help.get(required_col, "选择对应的列")
+            )
+            column_mapping[required_col] = int(selected.split(' ')[1])
     
-    with col4:
-        required_col = REQUIRED_COLUMNS[3]  # 销售手机
-        default_index = detected_mapping.get(required_col, saved_mapping.get(required_col, 3))
-        if default_index >= len(col_options):
-            default_index = 3 if len(col_options) > 3 else 0
+    st.markdown("#### 📅 时间信息字段")
+    cols = st.columns(4)
+    time_fields = ['去程出发日期', '返程出发日期', '去程出发时间', '去程到达时间']
+    for i, required_col in enumerate(time_fields):
+        with cols[i]:
+            default_index = detected_mapping.get(required_col, saved_mapping.get(required_col, i + 8))
+            if default_index >= len(col_options):
+                default_index = (i + 8) if (i + 8) < len(col_options) else 0
             
-        label = f"📞 {required_col}"
-        if required_col in detected_mapping:
-            conf = confidence_scores.get(required_col, 0)
-            label += f" 🤖(推荐: {conf:.2f})"
+            icon = field_icons.get(required_col, '📄')
+            label = f"{icon} {required_col}"
+            if required_col in detected_mapping:
+                conf = confidence_scores.get(required_col, 0)
+                label += f" 🤖({conf:.2f})"
+                
+            selected = st.selectbox(
+                label,
+                col_options,
+                index=default_index,
+                key=f"mapping_{required_col}",
+                help=field_help.get(required_col, "选择对应的列")
+            )
+            column_mapping[required_col] = int(selected.split(' ')[1])
+    
+    cols = st.columns(4)
+    time_fields2 = ['返程出发时间', '返程到达时间']
+    for i, required_col in enumerate(time_fields2):
+        with cols[i]:
+            default_index = detected_mapping.get(required_col, saved_mapping.get(required_col, i + 12))
+            if default_index >= len(col_options):
+                default_index = (i + 12) if (i + 12) < len(col_options) else 0
             
-        selected = st.selectbox(
-            label,
-            col_options,
-            index=default_index,
-            key=f"mapping_{required_col}",
-            help="选择包含销售手机号的列（用于接收出票短信）"
-        )
-        column_mapping[required_col] = int(selected.split(' ')[1])
+            icon = field_icons.get(required_col, '📄')
+            label = f"{icon} {required_col}"
+            if required_col in detected_mapping:
+                conf = confidence_scores.get(required_col, 0)
+                label += f" 🤖({conf:.2f})"
+                
+            selected = st.selectbox(
+                label,
+                col_options,
+                index=default_index,
+                key=f"mapping_{required_col}",
+                help=field_help.get(required_col, "选择对应的列")
+            )
+            column_mapping[required_col] = int(selected.split(' ')[1])
+    
+    st.markdown("#### 🏢 地点信息字段")
+    cols = st.columns(4)
+    location_fields = ['去程出发站', '去程到达站', '返程出发站', '返程到达站']
+    for i, required_col in enumerate(location_fields):
+        with cols[i]:
+            default_index = detected_mapping.get(required_col, saved_mapping.get(required_col, i + 14))
+            if default_index >= len(col_options):
+                default_index = (i + 14) if (i + 14) < len(col_options) else 0
+            
+            icon = field_icons.get(required_col, '📄')
+            label = f"{icon} {required_col}"
+            if required_col in detected_mapping:
+                conf = confidence_scores.get(required_col, 0)
+                label += f" 🤖({conf:.2f})"
+                
+            selected = st.selectbox(
+                label,
+                col_options,
+                index=default_index,
+                key=f"mapping_{required_col}",
+                help=field_help.get(required_col, "选择对应的列")
+            )
+            column_mapping[required_col] = int(selected.split(' ')[1])
+    
+    st.markdown("#### 📝 其他信息字段")
+    cols = st.columns(4)
+    other_fields = ['备注']
+    for i, required_col in enumerate(other_fields):
+        with cols[i]:
+            default_index = detected_mapping.get(required_col, saved_mapping.get(required_col, 18))
+            if default_index >= len(col_options):
+                default_index = 18 if 18 < len(col_options) else 0
+            
+            icon = field_icons.get(required_col, '📄')
+            label = f"{icon} {required_col}"
+            if required_col in detected_mapping:
+                conf = confidence_scores.get(required_col, 0)
+                label += f" 🤖({conf:.2f})"
+                
+            selected = st.selectbox(
+                label,
+                col_options,
+                index=default_index,
+                key=f"mapping_{required_col}",
+                help=field_help.get(required_col, "选择对应的列")
+            )
+            column_mapping[required_col] = int(selected.split(' ')[1])
     
     # 操作按钮
     col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 2])
@@ -1855,8 +2020,91 @@ if uploaded_file is not None:
         else:
             # 成功读取，继续处理
             df.dropna(subset=['姓名*'], inplace=True)
-            expert_list = ["---请选择---"] + df['姓名*'].tolist()
-            selected_expert_name = st.selectbox("请从表格中选择一位专家：", expert_list)
+            
+            # 添加状态筛选控制区域
+            st.markdown("### 🔍 专家状态筛选")
+            
+            # 检查是否有备注列数据
+            has_remark_data = '备注' in df.columns and df['备注'].notna().any()
+            
+            if has_remark_data:
+                # 计算状态统计
+                total_experts = len(df)
+                completed_experts = df[df['备注'].apply(is_ticket_completed)]
+                pending_experts = df[~df['备注'].apply(is_ticket_completed)]
+                
+                completed_count = len(completed_experts)
+                pending_count = len(pending_experts)
+                
+                # 显示统计信息
+                col_stat1, col_stat2, col_stat3 = st.columns(3)
+                with col_stat1:
+                    st.metric("总专家数", total_experts, help="Excel表格中的专家总数")
+                with col_stat2:
+                    st.metric("已完成出票", completed_count, help="备注中标记为已完成的专家数")
+                with col_stat3:
+                    st.metric("待处理", pending_count, help="尚未完成出票的专家数")
+                
+                # 筛选控制
+                filter_options = ["显示所有专家", "只显示待处理", "只显示已完成"]
+                selected_filter = st.selectbox(
+                    "选择显示模式：",
+                    filter_options,
+                    index=1,  # 默认显示待处理
+                    help="选择要在下拉列表中显示的专家类型"
+                )
+                
+                # 根据筛选条件过滤数据
+                if selected_filter == "只显示待处理":
+                    filtered_df = pending_experts
+                    filter_info = f"🟡 当前显示：{len(filtered_df)} 位待处理专家"
+                elif selected_filter == "只显示已完成":
+                    filtered_df = completed_experts
+                    filter_info = f"🟢 当前显示：{len(filtered_df)} 位已完成专家"
+                else:
+                    filtered_df = df
+                    filter_info = f"🔵 当前显示：{len(filtered_df)} 位全部专家"
+                
+                st.info(filter_info)
+                
+                # 显示筛选后的专家列表
+                if len(filtered_df) > 0:
+                    expert_list = ["---请选择---"] + filtered_df['姓名*'].tolist()
+                    
+                    # 为每个专家添加状态标识
+                    expert_list_with_status = ["---请选择---"]
+                    for _, expert_row in filtered_df.iterrows():
+                        expert_name = expert_row['姓名*']
+                        remark = expert_row.get('备注', '')
+                        is_completed = is_ticket_completed(remark)
+                        
+                        if is_completed:
+                            status_icon = "✅"
+                            status_text = "已完成"
+                        else:
+                            status_icon = "⏳"
+                            status_text = "待处理"
+                        
+                        expert_display = f"{status_icon} {expert_name} ({status_text})"
+                        expert_list_with_status.append(expert_display)
+                    
+                    selected_expert_display = st.selectbox("请从筛选结果中选择一位专家：", expert_list_with_status)
+                    
+                    # 提取实际的专家姓名
+                    if selected_expert_display and selected_expert_display != "---请选择---":
+                        # 从显示文本中提取专家姓名
+                        selected_expert_name = selected_expert_display.split(' ')[1]  # 去掉状态图标
+                        selected_expert_name = selected_expert_name.split(' (')[0]  # 去掉状态文本
+                    else:
+                        selected_expert_name = None
+                else:
+                    st.warning(f"⚠️ 当前筛选条件下没有专家数据。请尝试其他筛选选项。")
+                    selected_expert_name = None
+            else:
+                # 没有备注数据时的默认行为
+                st.info("📝 未检测到备注列数据，显示所有专家")
+                expert_list = ["---请选择---"] + df['姓名*'].tolist()
+                selected_expert_name = st.selectbox("请从表格中选择一位专家：", expert_list)
 
             if selected_expert_name and selected_expert_name != "---请选择---":
                 selected_row = df[df['姓名*'] == selected_expert_name].iloc[0]
