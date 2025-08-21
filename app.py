@@ -1,4 +1,4 @@
-import streamlit as st
+﻿import streamlit as st
 import pandas as pd
 import re
 import json
@@ -20,7 +20,7 @@ except ImportError:
     
     class VersionManager:
         def __init__(self):
-            self.current_version = '1.0.0'
+            self.current_version = '2.0'
 
 # --- 页面基础设置 ---
 st.set_page_config(page_title="MICE TICKETING APP", layout="wide")
@@ -347,7 +347,7 @@ version_manager = VersionManager()
 current_version = version_manager.current_version
 
 # 使用自定义样式的标题
-st.markdown(f'<h1 class="main-title">✈️ MICE TICKETING APP Ver{current_version}</h1>', unsafe_allow_html=True)
+st.markdown(f'<h1 class="main-title">✈️ MICE TICKETING APP Ver {current_version}</h1>', unsafe_allow_html=True)
 st.markdown('<p class="sub-title">上传客户信息表，选择专家即可自动填充信息，告别手动输入！</p>', unsafe_allow_html=True)
 
 # 自动更新检查（在侧边栏显示）
