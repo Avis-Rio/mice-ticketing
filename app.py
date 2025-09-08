@@ -2538,7 +2538,7 @@ with col4:
             lines = cleaned_text.split('\n')
             non_empty_lines = [line.strip() for line in lines if line.strip()]
             final_text = '\n'.join(non_empty_lines)
-            expert_confirmation_text = f"【请确认以下航班信息】\n{final_text}\n请您核对老师的机票预定信息，如无问题请回复出票[抱拳]出票短信同步发送给您~"
+            expert_confirmation_text = f"【请确认以下航班信息】\n{final_text}\n请您核对老师的机票预定信息，如无问题请回复【确认出票】。出票短信同步发送给您~"
             st.code(expert_confirmation_text, language="text")
             st.success("价格已移除！请点击右上角复制按钮，将此信息发送给专家确认。")
         else:
